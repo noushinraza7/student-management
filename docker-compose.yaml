@@ -1,0 +1,36 @@
+services:
+  web:
+    image: nousheenr/new-project:${BUILD_NUMBER:-latest}
+    container_name: student-container
+    ports:
+      - "8085:5000"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: studentdb
+      DB_USER: admin
+      DB_PASSWORD: admin123
+    depends_on:
+      - mysql
+    networks:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    container_name: student-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: studentdb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+    volumes:
+      - studentvol:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    networks:
+      - backend
+
+volumes:
+  studentvol:
+
+networks:
+  backend:
